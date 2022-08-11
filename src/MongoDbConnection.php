@@ -61,8 +61,6 @@ class MongoDbConnection extends Connection implements ConnectionInterface
              * http://php.net/manual/zh/mongodb-driver-manager.construct.php
              */
             $configuration = new MongodbConfiguration($this->config);
-            var_dump($configuration->getDsn());
-            var_dump($configuration->getOptions());
             $this->connection = new Manager($configuration->getDsn(), $configuration->getOptions());
         } catch (InvalidArgumentException $e) {
             throw MongoDBException::managerError('mongodb 连接参数错误:' . $e->getMessage());
