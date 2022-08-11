@@ -1,0 +1,30 @@
+{
+    "name": "menciusnh4/hyperf-mongodb",
+    "require": {
+        "php": ">=7.2",
+        "psr/container": ">1.0",
+        "hyperf/pool": ">2.0",
+        "hyperf/utils": ">2.0.0"
+    },
+    "authors": [
+        {
+            "name": "Menciusnh4",
+            "email": "menciusnh4@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+      "files": [
+        "./src/Functions.php"
+      ],
+      "psr-4": {
+        "Menciusnh4\\Mongodb\\": "src/"
+      }
+    },
+    "extra": {
+      "hyperf": {
+        "config": "Menciusnh4\\Mongodb\\ConfigProvider"
+      }
+    }
+}
+
