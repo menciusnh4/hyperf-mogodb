@@ -13,8 +13,8 @@ return [
             // 需要配置 username
             'authMechanism' => 'SCRAM-SHA-256',
             //设置复制集,没有不设置
-            //            'replica' => env('MONGODB_Replica', 'rs0'),
-            //            'readPreference' => env('MONGODB_ReadPreference', 'primary')
+            //'replica' => env('MONGODB_Replica', 'rs0'),
+            //'readPreference' => env('MONGODB_ReadPreference', 'primary')
         ],
         'pool' => [
             'min_connections' => 10,
