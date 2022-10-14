@@ -63,9 +63,9 @@ class MongoDbConnection extends Connection implements ConnectionInterface
             $configuration = new MongodbConfiguration($this->config);
             $this->connection = new Manager($configuration->getDsn(), $configuration->getOptions());
         } catch (InvalidArgumentException $e) {
-            throw MongoDBException::managerError('mongodb 连接参数错误:' . $e->getMessage());
+            MongoDBException::managerError('mongodb 连接参数错误:' . $e->getMessage());
         } catch (RuntimeException $e) {
-            throw MongoDBException::managerError('mongodb uri格式错误:' . $e->getMessage());
+            MongoDBException::managerError('mongodb uri格式错误:' . $e->getMessage());
         }
         $this->lastUseTime = microtime(true);
         return true;
@@ -384,6 +384,51 @@ class MongoDbConnection extends Connection implements ConnectionInterface
         }
     }
 
+    /**
+     * 更新
+     * @param string $namespace
+     * @param array $filter
+     * @param array $newObj
+     * @param array $opts
+     * @param int $timeout
+     * @return \MongoDB\Driver\WriteResult
+     * @throws MongoDBException
+     */
+    public function update(string $namespace, array $filter = [], array $newObj = [], array $opts = [], $timeout =1000)
+    {
+        try {
+            if(isset($filter['_id'])) {
+                if(is_array($filter['_id'])){
+                    $filter['_id'] = array_map(function ($v) {
+                        if($v instanceof ObjectId) {
+                            return $v;
+                        }
+                        return new ObjectId($v);
+                    }, $filter['_id']);
+                }else{
+                    if(!($filter['_id'] instanceof ObjectId)){
+                        $filter['_id'] = new ObjectId($filter['_id']);
+                    }
+                }
+            }
+
+            $bulk = new BulkWrite;
+            $bulk->update(
+                $filter,
+                $newObj,
+                $opts
+            );
+            $written = new WriteConcern(WriteConcern::MAJORITY, $timeout);
+            $result = $this->connection->executeBulkWrite($this->config['db'] . '.' . $namespace, $bulk, $written);
+        } catch (\Exception $e) {
+            $result = false;
+            throw new MongoDBException($e->getFile() . $e->getLine() . $e->getMessage());
+        } finally {
+            $this->release();
+            return $result;
+        }
+    }
+
 
     /**
      * 删除数据
@@ -527,37 +572,37 @@ class MongoDbConnection extends Connection implements ConnectionInterface
     {
         switch ($e) {
             case ($e instanceof InvalidArgumentException):
-                {
-                    throw MongoDBException::managerError('mongo argument exception: ' . $e->getMessage());
-                }
+            {
+                MongoDBException::managerError('mongo argument exception: ' . $e->getMessage());
+            }
             case ($e instanceof AuthenticationException):
-                {
-                    throw MongoDBException::managerError('mongo数据库连接授权失败:' . $e->getMessage());
-                }
+            {
+                MongoDBException::managerError('mongo数据库连接授权失败:' . $e->getMessage());
+            }
             case ($e instanceof ConnectionException):
-                {
-                    /**
-                     * https://cloud.tencent.com/document/product/240/4980
-                     * 存在连接失败的，那么进行重连
-                     */
-                    for ($counts = 1; $counts <= 5; $counts++) {
-                        try {
-                            $this->reconnect();
-                        } catch (\Exception $e) {
-                            continue;
-                        }
-                        break;
+            {
+                /**
+                 * https://cloud.tencent.com/document/product/240/4980
+                 * 存在连接失败的，那么进行重连
+                 */
+                for ($counts = 1; $counts <= 5; $counts++) {
+                    try {
+                        $this->reconnect();
+                    } catch (\Exception $e) {
+                        continue;
                     }
-                    return true;
+                    break;
                 }
+                return true;
+            }
             case ($e instanceof RuntimeException):
-                {
-                    throw MongoDBException::managerError('mongo runtime exception: ' . $e->getMessage());
-                }
+            {
+                MongoDBException::managerError('mongo runtime exception: ' . $e->getMessage());
+            }
             default:
-                {
-                    throw MongoDBException::managerError('mongo unexpected exception: ' . $e->getMessage());
-                }
+            {
+                MongoDBException::managerError('mongo unexpected exception: ' . $e->getMessage());
+            }
         }
     }
 }
