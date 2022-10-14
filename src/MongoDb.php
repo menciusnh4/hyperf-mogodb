@@ -210,6 +210,29 @@ class MongoDb
             throw new MongoDBException($e->getFile() . $e->getLine() . $e->getMessage());
         }
     }
+
+    /**
+     * 更新方法
+     * @param string $namespace
+     * @param array $filter
+     * @param array $newObj
+     * @param array $opts
+     * @param int $timeout
+     * @return \MongoDB\Driver\WriteResult
+     * @throws MongoDBException
+     */
+    public function update(string $namespace, array $filter = [], array $newObj = [], array $opts = [], $timeout =1000) {
+        try {
+            /**
+             * @var $collection MongoDBConnection
+             */
+            $collection = $this->getConnection();
+            return $collection->update($namespace, $filter, $newObj, $opts, $timeout);
+        } catch (\Exception $e) {
+            throw new MongoDBException($e->getFile() . $e->getLine() . $e->getMessage());
+        }
+    }
+
     /**
      * 删除满足条件的数据，默认只删除匹配条件的第一条记录，如果要删除多条$limit=true
      *
