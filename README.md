@@ -1,7 +1,7 @@
 # hyperf-mogodb
 
 ```
-composer require gioco-plus/hyperf-mongodb
+composer require menciusnh4/hyperf-mongodb
 ```
 
 ## config
