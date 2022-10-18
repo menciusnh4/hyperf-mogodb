@@ -429,6 +429,29 @@ class MongoDbConnection extends Connection implements ConnectionInterface
         }
     }
 
+    /**
+     * @param $namespace
+     * @param BulkWrite $bulk
+     * @param null $written
+     * @param int $timeout
+     * @return \MongoDB\Driver\WriteResult
+     * @throws MongoDBException
+     */
+    public function executeBulkWrite($namespace,BulkWrite $bulk, $written=null, $timeout=1000)
+    {
+        try {
+        if(empty($written)){
+            $written = new WriteConcern(WriteConcern::MAJORITY, $timeout);
+        }
+            $result = $this->connection->executeBulkWrite($this->config['db'] . '.' . $namespace, $bulk, $written);
+        } catch (\Exception $e) {
+            $result = null;
+            throw new MongoDBException($e->getFile() . $e->getLine() . $e->getMessage());
+        } finally {
+            $this->release();
+            return $result;
+        }
+    }
 
     /**
      * 删除数据

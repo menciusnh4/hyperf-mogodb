@@ -5,6 +5,8 @@ namespace Menciusnh4\Mongodb;
 use Menciusnh4\Mongodb\Exception\MongoDBException;
 use Menciusnh4\Mongodb\Pool\PoolFactory;
 use Hyperf\Utils\Context;
+use MongoDB\Driver\BulkWrite;
+use MongoDB\Driver\WriteResult;
 
 /**
  * Class MongoDb
@@ -250,6 +252,27 @@ class MongoDb
              */
             $collection = $this->getConnection();
             return $collection->delete($namespace, $filter, $limit);
+        } catch (\Exception $e) {
+            throw new MongoDBException($e->getFile() . $e->getLine() . $e->getMessage());
+        }
+    }
+
+    /**
+     * @param string $namespace
+     * @param BulkWrite $bulk
+     * @param null $written
+     * @param int $timeout
+     * @return bool|WriteResult
+     * @throws MongoDBException
+     */
+    public function executeBulkWrite(string $namespace, BulkWrite $bulk, $written=null, $timeout=1000)
+    {
+        try {
+            /**
+             * @var $collection MongoDBConnection
+             */
+            $collection = $this->getConnection();
+            return $collection->executeBulkWrite($namespace, $bulk, $written, $timeout);
         } catch (\Exception $e) {
             throw new MongoDBException($e->getFile() . $e->getLine() . $e->getMessage());
         }
