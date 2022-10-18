@@ -330,7 +330,11 @@ class MongoDb
         return $this;
     }
 
-    private function getConnection()
+    /**
+     * 获取连接池
+     * @return MongoDbConnection|mixed|null
+     */
+    public function getConnection()
     {
         $connection = null;
         $hasContextConnection = Context::has($this->getContextKey());
