@@ -1,11 +1,10 @@
 <?php
 
 
-namespace Hyperf\Mongodb;
+namespace Menciusnh4\Mongodb;
 
 
 use Menciusnh4\Mongodb\Exception\MongoDBException;
-use Menciusnh4\Mongodb\MongoDbConnection;
 use Menciusnh4\Mongodb\Pool\PoolFactory;
 use Hyperf\Utils\Context;
 use MongoDB\Driver\BulkWrite;
