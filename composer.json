@@ -13,7 +13,6 @@
             "email": "menciusnh4@gmail.com"
         }
     ],
-    "minimum-stability": "stable",
     "autoload": {
       "files": [
         "./src/Functions.php"
