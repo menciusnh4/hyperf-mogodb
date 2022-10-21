@@ -1,0 +1,15 @@
+<?php
+
+namespace Menciusnh4\Mongodb\Exception;
+
+class MongoDBException extends \Exception
+{
+    /**
+     * @param string $msg
+     * @throws MongoDBException
+     */
+    public static function managerError(string $msg)
+    {
+        throw new self($msg);
+    }
+}
